@@ -31111,9 +31111,9 @@ function run() {
     };
 
     if (removeRequest) {
-      octokit.pulls.removeRequestedReviewers(params);
+      octokit.rest.pulls.removeRequestedReviewers(params);
     } else {
-      octokit.pulls.requestReviewers(params);
+      octokit.rest.pulls.requestReviewers(params);
     }
   } catch (error) {
     core.setFailed(error.message);
