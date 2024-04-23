@@ -12,5 +12,5 @@ inputs:
   remove:
     description: "Remove a review request (defaults to false)"
 runs:
-  using: "node12"
+  using: "node20"
   main: "dist/index.js"
