@@ -30,13 +30,31 @@ function run() {
       reviewers: prReviewers,
     };
 
+    const currentReviewers = context.payload.pull_request.requested_reviewers.map(r => r.login);
+
     if (removeRequest) {
-      octokit.rest.pulls.removeRequestedReviewers(params);
+      removeReviewers(octokit, params, currentReviewers);
     } else {
-      octokit.rest.pulls.requestReviewers(params);
+      addReviewers(octokit, params, currentReviewers);
     }
   } catch (error) {
     core.setFailed(error.message);
+  }
+}
+
+function removeReviewers(octokit, request, reviewers) {
+  const actuallyRemove = (new Set(request.reviewers)).intersection(new Set(reviewers));
+  request.reviewers = Array.from(actuallyRemove);
+  if (request.reviewers.length != 0) {
+    octokit.rest.pulls.removeRequestedReviewers(params);
+  }
+}
+
+function addReviewers(octokit, request, reviewers) {
+  const actuallyRequest = (new Set(request.reviewers)).difference(new Set(reviewers));
+  request.reviewers = Array.from(actuallyRequest);
+  if (request.reviewers.length != 0) {
+    octokit.rest.pulls.removeRequestedReviewers(params);
   }
 }
 
